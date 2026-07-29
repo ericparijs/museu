@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="./doc-page.js"></script>
+<script src="./image-slot.js"></script>
+<style>doc-page:not(:defined){visibility:hidden}</style>
+</helmet>
+<doc-page margin="0.75in">
+<h1 style="margin-bottom:2px">App de Áudio-Guia Multilingue — Briefing para Desenvolvimento</h1>
+<p style="margin-top:0;color:#555">Museu do Papel Terras de Santa Maria · 15 salas · 10 idiomas · orçamento reduzido</p>
+
+<h2>O que precisamos</h2>
+<p>Uma aplicação web para visitantes: escolher o idioma, ler um código QR (ou navegar numa lista) em cada sala, e ouvir uma breve descrição narrada. A equipa do museu tem de conseguir adicionar/editar salas, traduções e áudio sem depender de um programador.</p>
+
+<h2>Âmbito</h2>
+<ul>
+<li><strong>App do visitante (PWA):</strong> um único código QR no átrio abre a app; dentro dela, o visitante escolhe o idioma e navega livremente pela lista de salas, em qualquer ordem, tocando na sala onde se encontra → leitor de áudio (play/pause, avançar, transcrição).</li>
+<li><strong>Painel da equipa:</strong> ecrã simples para gerir salas (nome, texto de narração por idioma, estado do áudio: gravado / TTS / em falta).</li>
+<li><strong>Código QR:</strong> um único, colocado no átrio/entrada, a apontar para a app.</li>
+</ul>
+
+<h2>Restrição de orçamento: sem backend próprio</h2>
+<p>Para manter os custos de operação próximos de zero, pedimos que se evite uma base de dados + servidor tradicional. Arquitetura preferida:</p>
+<ul>
+<li><strong>Fonte de dados:</strong> uma Google Sheet, editada diretamente pela equipa do museu (sem qualquer conhecimento técnico) — salas, texto de tradução, ligações de áudio, estados. A app lê a folha publicada como CSV em tempo real; sem backend de administração para alojar ou manter.</li>
+<li><strong>Alojamento:</strong> frontend estático no plano gratuito do Netlify ou Vercel.</li>
+<li><strong>Armazenamento de media:</strong> plano gratuito do Cloudflare R2 (10GB, sem custos de tráfego de saída) para os áudios das salas.</li>
+<li><strong>Áudio das salas:</strong> todos os ficheiros são pré-produzidos por nós (gravação humana ou texto-para-voz gerado offline) e carregados como ficheiros normais no Cloudflare R2. A app apenas reproduz ficheiros de áudio — não há geração de voz em tempo real, nem chamadas a serviços de TTS a partir da app.</li>
+</ul>
+
+<h2>O que fornecemos</h2>
+<ul>
+<li>Prototipo interativo do design (todos os ecrãs, fluxos e tom de texto) — em anexo.</li>
+<li>Identidade visual: logótipo do museu, nome, e fotografias de referência do espaço.</li>
+<li>Texto de narração para as salas piloto; alguns idiomas já gravados, outros pendentes.</li>
+</ul>
+
+<h2>O que pedimos para orçamentar</h2>
+<ul>
+<li>Construção da PWA do visitante e do fluxo de dados editável pela equipa, conforme descrito.</li>
+<li>Configuração das contas de alojamento/armazenamento em nosso nome (para mantermos a propriedade).</li>
+<li>Uma breve sessão de formação para a equipa sobre como editar a Google Sheet.</li>
+</ul>
+
+<h2>Fora do âmbito nesta fase</h2>
+<p>Backend/base de dados próprios, integração de TTS, apps nativas iOS/Android, ativação por Bluetooth beacon, e o filme introdutório (mantido apenas na experiência presencial do museu, por decisão da direção, para não reduzir o incentivo à visita) — abertos a propor algumas destas opções como fases futuras.</p>
+
+<h2>Prazo e orçamento</h2>
+<p>Pretendemos uma construção enxuta (dias, não meses), dada a arquitetura reduzida — pedimos que o orçamento reflita isso, e que sinalizem qualquer coisa que altere significativamente este âmbito.</p>
+
+<h2>Fotografias de referência</h2>
+<div style="display:flex;gap:12px;break-inside:avoid">
+<image-slot id="ref-hall" style="width:33%;height:150px" shape="rounded" radius="8" src="./assets/photo-hall.webp" placeholder="Foto do espaço"></image-slot>
+<image-slot id="ref-racks" style="width:33%;height:150px" shape="rounded" radius="8" src="./assets/photo-racks.webp" placeholder="Foto do espaço"></image-slot>
+<image-slot id="ref-corridor" style="width:34%;height:150px" shape="rounded" radius="8" src="./assets/photo-corridor.webp" placeholder="Foto do espaço"></image-slot>
+</div>
+
+<h2>Contacto</h2>
+<p>[Nome do contacto do museu] · [email] · [telefone]</p>
+</doc-page>
+
+</x-dc>
+</body>
+</html>

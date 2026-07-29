@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:oklch(17% 0.01 55);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:oklch(95% 0.008 70)}
+  a{color:oklch(64% 0.14 55)}
+  a:hover{color:oklch(56% 0.14 55)}
+  ::-webkit-scrollbar{width:6px}
+  ::-webkit-scrollbar-thumb{background:oklch(38% 0.014 55);border-radius:3px}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid oklch(28% 0.012 55);background:oklch(17% 0.01 55)">
+    <sc-if value="{{ showLogoImage }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#fff;border-radius:8px;padding:6px 12px;display:flex;align-items:center">
+        <img src="{{ logoSrc }}" alt="Museu do Papel Terras de Santa Maria" style="height:26px;display:block" />
+      </div>
+    </sc-if>
+    <sc-if value="{{ showLogoText }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:baseline;gap:10px">
+        <div style="font:800 17px/1 'Archivo',sans-serif;letter-spacing:0.2px;text-transform:lowercase;color:oklch(95% 0.008 70)">museu do papel</div>
+        <div style="font:600 11px/1 'Archivo',sans-serif;letter-spacing:0.4px;text-transform:lowercase;color:oklch(70% 0.07 65)">terras de santa maria</div>
+      </div>
+    </sc-if>
+    <div style="display:flex;gap:6px;background:oklch(23% 0.012 55);padding:4px;border-radius:10px">
+      <button style="border:none;padding:8px 16px;border-radius:8px;font:600 13px system-ui;cursor:pointer;background:{{ visitorTabBg }};color:{{ visitorTabColor }}" onClick="{{ goVisitor }}">Visitor App</button>
+      <button style="border:none;padding:8px 16px;border-radius:8px;font:600 13px system-ui;cursor:pointer;background:{{ staffTabBg }};color:{{ staffTabColor }}" onClick="{{ goStaff }}">Staff Admin</button>
+    </div>
+  </div>
+
+  <sc-if value="{{ isVisitor }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;background:radial-gradient(circle at 50% 0%, oklch(24% 0.014 55), oklch(15% 0.008 55) 65%)">
+      <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" title="{{ deviceTitle }}" dark="{{ true }}" hint-size="390,844">
+
+        <sc-if value="{{ showGeoCheck }}" hint-placeholder-val="{{ false }}">
+          <div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;box-sizing:border-box;background:oklch(17% 0.01 55);text-align:center">
+            <div style="font:24px system-ui;margin-bottom:16px">📍</div>
+            <div style="font:700 18px/1.3 'Archivo',sans-serif;margin-bottom:8px;text-transform:lowercase">checking your location</div>
+            <div style="font:14px/1.5 system-ui;color:oklch(68% 0.012 60)">This guide only works inside the museum. One moment…</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showGeoBlocked }}" hint-placeholder-val="{{ false }}">
+          <div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;box-sizing:border-box;background:oklch(17% 0.01 55);text-align:center">
+            <div style="font:24px system-ui;margin-bottom:16px">🏛️</div>
+            <div style="font:700 18px/1.3 'Archivo',sans-serif;margin-bottom:8px;text-transform:lowercase">not at the museum</div>
+            <div style="font:14px/1.5 system-ui;color:oklch(68% 0.012 60);margin-bottom:24px">This audio guide only works on-site, inside Museu do Papel. Visit us to listen to the full tour.</div>
+            <button style="padding:12px 20px;border-radius:12px;border:1px solid oklch(38% 0.014 55);background:transparent;color:oklch(85% 0.01 65);font:600 14px system-ui;cursor:pointer" onClick="{{ retryGeo }}">Try again</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showLanguage }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;padding:28px 22px;box-sizing:border-box;background:oklch(17% 0.01 55)">
+            <div style="font:700 22px/1.25 'Archivo',sans-serif;margin-bottom:6px;text-transform:lowercase">welcome</div>
+            <div style="font:15px/1.5 system-ui;color:oklch(68% 0.012 60);margin-bottom:28px">Choose your language to begin the audio guide.</div>
+            <div style="display:flex;flex-direction:column;gap:10px;overflow:auto">
+              <sc-for list="{{ languages }}" as="lang" hint-placeholder-count="10">
+                <button style="text-align:left;border:1px solid oklch(32% 0.012 55);background:oklch(23% 0.012 55);padding:14px 16px;border-radius:12px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font:15px system-ui;color:oklch(95% 0.008 70)" onClick="{{ lang.select }}">
+                  <span style="font-weight:600">{{ lang.native }}</span>
+                  <span style="color:oklch(70% 0.07 65);font-size:13px">{{ lang.name }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showRoomList }}" hint-placeholder-val="{{ true }}">
+          <div style="height:100%;display:flex;flex-direction:column;box-sizing:border-box;background:oklch(17% 0.01 55)">
+            <div style="padding:22px 22px 6px">
+              <div style="font:700 20px/1.25 'Archivo',sans-serif;text-transform:lowercase">all rooms</div>
+              <div style="font:14px/1.5 system-ui;color:oklch(68% 0.012 60);margin-top:6px">Walk to any room and tap it to hear its story — in any order.</div>
+            </div>
+            <div style="flex:1;overflow:auto;padding:10px 14px 8px;display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ roomListItems }}" as="room" hint-placeholder-count="15">
+                <button style="text-align:left;border:1px solid oklch(32% 0.012 55);background:oklch(23% 0.012 55);padding:12px 14px;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:12px;font:14px system-ui;color:oklch(95% 0.008 70)" onClick="{{ room.open }}">
+                  <span style="width:30px;height:30px;flex:none;border-radius:8px;background:oklch(30% 0.03 60);display:flex;align-items:center;justify-content:center;font:700 13px system-ui;color:oklch(75% 0.09 60)">{{ room.number }}</span>
+                  <span style="font-weight:600">{{ room.name }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showSwitchLang }}" hint-placeholder-val="{{ false }}">
+          <div style="height:100%;display:flex;flex-direction:column;padding:22px;box-sizing:border-box;background:oklch(17% 0.01 55)">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+              <button style="border:none;background:transparent;font:20px system-ui;cursor:pointer;color:oklch(64% 0.14 55)" onClick="{{ closeSwitchLang }}">←</button>
+              <div style="font:700 18px/1.25 'Archivo',sans-serif;text-transform:lowercase">change language</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;overflow:auto">
+              <sc-for list="{{ languages }}" as="lang" hint-placeholder-count="10">
+                <button style="text-align:left;border:1px solid oklch(32% 0.012 55);background:oklch(23% 0.012 55);padding:14px 16px;border-radius:12px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font:15px system-ui;color:oklch(95% 0.008 70)" onClick="{{ lang.selectAndReturn }}">
+                  <span style="font-weight:600">{{ lang.native }}</span>
+                  <span style="color:oklch(70% 0.07 65);font-size:13px">{{ lang.name }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showPlayer }}" hint-placeholder-val="{{ false }}">
+          <div style="height:100%;display:flex;flex-direction:column;box-sizing:border-box;background:oklch(17% 0.01 55)">
+            <div style="padding:16px 20px 0;display:flex;align-items:center;justify-content:space-between">
+              <button style="border:none;background:transparent;font:20px system-ui;cursor:pointer;color:oklch(64% 0.14 55)" onClick="{{ backToHome }}">←</button>
+              <button style="border:1px solid oklch(38% 0.014 55);background:oklch(23% 0.012 55);border-radius:20px;padding:6px 12px;font:600 12px system-ui;cursor:pointer;color:oklch(85% 0.01 65)" onClick="{{ openSwitchLang }}">{{ currentLangNative }}</button>
+            </div>
+            <div style="margin:18px 22px 0;height:180px;border-radius:16px;background:repeating-linear-gradient(135deg,oklch(30% 0.03 60) 0 10px,oklch(26% 0.02 60) 10px 20px);display:flex;align-items:center;justify-content:center;color:oklch(78% 0.05 60);font:12px ui-monospace,monospace;flex:none">room photograph</div>
+            <div style="padding:18px 24px 0">
+              <div style="font:13px system-ui;color:oklch(68% 0.012 60)">Room {{ currentRoomNumber }}</div>
+              <div style="font:700 22px/1.3 'Archivo',sans-serif;margin-top:2px">{{ currentRoomName }}</div>
+            </div>
+            <div style="padding:16px 24px 0;flex:1;overflow:auto">
+              <sc-if value="{{ transcriptOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="font:15px/1.65 system-ui;color:oklch(90% 0.008 70)">{{ currentRoomText }}</div>
+              </sc-if>
+              <sc-if value="{{ transcriptClosed }}" hint-placeholder-val="{{ true }}">
+                <div style="font:14px/1.6 system-ui;color:oklch(68% 0.012 60)">{{ currentRoomTextPreview }}</div>
+              </sc-if>
+            </div>
+            <div style="padding:14px 24px 8px">
+              <button style="border:none;background:transparent;color:oklch(64% 0.14 55);font:600 13px system-ui;cursor:pointer;padding:0" onClick="{{ toggleTranscript }}">{{ transcriptLabel }}</button>
+            </div>
+            <div style="padding:6px 24px 0">
+              <div style="height:4px;border-radius:2px;background:oklch(32% 0.012 55);position:relative">
+                <div style="height:4px;border-radius:2px;background:oklch(64% 0.14 55);width:{{ progressPct }}%"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font:11px ui-monospace,monospace;color:oklch(60% 0.012 60);margin-top:6px">
+                <span>{{ elapsedLabel }}</span>
+                <span>{{ durationLabel }}</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:26px;padding:16px 24px 30px">
+              <button style="border:none;background:transparent;font:20px system-ui;cursor:pointer;color:oklch(80% 0.01 65)" onClick="{{ skipPrev }}">⟲</button>
+              <button style="width:60px;height:60px;border-radius:30px;border:none;background:oklch(64% 0.14 55);color:oklch(15% 0.01 55);font:22px system-ui;cursor:pointer;display:flex;align-items:center;justify-content:center" onClick="{{ togglePlay }}">{{ playIcon }}</button>
+              <button style="border:none;background:transparent;font:20px system-ui;cursor:pointer;color:oklch(80% 0.01 65)" onClick="{{ skipNext }}">⟳</button>
+            </div>
+          </div>
+        </sc-if>
+
+      </x-import>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isStaff }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;display:flex;background:oklch(97% 0.008 68);color:oklch(22% 0.012 55)">
+      <div style="width:220px;flex:none;background:oklch(99% 0.004 68);border-right:1px solid oklch(88% 0.01 65);padding:22px 16px;display:flex;flex-direction:column;gap:4px">
+        <div style="font:600 12px system-ui;color:oklch(50% 0.012 60);text-transform:uppercase;letter-spacing:0.06em;padding:0 10px 10px">Manage</div>
+        <div style="padding:10px 12px;border-radius:8px;cursor:pointer;background:{{ navRoomsBg }};font:600 14px system-ui;color:oklch(30% 0.012 55)" onClick="{{ goStaffRooms }}">Rooms</div>
+        <div style="padding:10px 12px;border-radius:8px;font:14px system-ui;color:oklch(50% 0.012 60)">Settings</div>
+      </div>
+
+      <div style="flex:1;padding:28px 36px;overflow:auto">
+        <sc-if value="{{ showStaffList }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px">
+            <div>
+              <div style="font:700 22px/1.25 'Archivo',sans-serif;text-transform:lowercase">rooms</div>
+              <div style="font:13px system-ui;color:oklch(50% 0.012 60);margin-top:4px">Edit narration text and audio per language for each room.</div>
+            </div>
+            <button style="border:none;background:oklch(64% 0.14 55);color:oklch(15% 0.01 55);padding:10px 16px;border-radius:8px;font:700 13px system-ui;cursor:pointer" onClick="{{ addRoom }}">+ Add room</button>
+          </div>
+
+          <div style="border:1px solid oklch(88% 0.01 65);border-radius:12px;overflow:hidden;background:oklch(99% 0.004 68)">
+            <div style="display:grid;grid-template-columns:70px 1fr 340px 90px;padding:12px 18px;background:oklch(94% 0.012 65);font:600 12px system-ui;color:oklch(48% 0.012 60);text-transform:uppercase;letter-spacing:0.04em">
+              <div>Room</div><div>Name</div><div>Languages</div><div></div>
+            </div>
+            <sc-for list="{{ staffRoomRows }}" as="row" hint-placeholder-count="15">
+              <div style="display:grid;grid-template-columns:70px 1fr 340px 90px;padding:14px 18px;border-top:1px solid oklch(92% 0.008 65);align-items:center;font:14px system-ui">
+                <div style="color:oklch(50% 0.012 60)">{{ row.number }}</div>
+                <div style="font-weight:600">{{ row.name }}</div>
+                <div style="display:flex;gap:5px;flex-wrap:wrap">
+                  <sc-for list="{{ row.badges }}" as="badge" hint-placeholder-count="10">
+                    <span title="{{ badge.title }}" style="width:24px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font:600 9px system-ui;{{ badge.style }}">{{ badge.code }}</span>
+                  </sc-for>
+                </div>
+                <button style="border:1px solid oklch(82% 0.012 60);background:transparent;padding:6px 12px;border-radius:7px;font:600 12px system-ui;cursor:pointer" onClick="{{ row.edit }}">Edit</button>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showStaffEditor }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+            <button style="border:none;background:transparent;font:18px system-ui;cursor:pointer;color:oklch(50% 0.13 55)" onClick="{{ closeEditor }}">←  Rooms</button>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-end;margin-bottom:20px">
+            <div>
+              <div style="font:11px system-ui;color:oklch(50% 0.012 60);margin-bottom:4px">Room number</div>
+              <input value="{{ editRoomNumber }}" onChange="{{ onNumberChange }}" style="border:1px solid oklch(82% 0.012 60);border-radius:8px;padding:9px 12px;font:14px system-ui;width:70px" />
+            </div>
+            <div style="flex:1;max-width:420px">
+              <div style="font:11px system-ui;color:oklch(50% 0.012 60);margin-bottom:4px">Room name</div>
+              <input value="{{ editRoomName }}" onChange="{{ onNameChange }}" style="border:1px solid oklch(82% 0.012 60);border-radius:8px;padding:9px 12px;font:14px system-ui;width:100%;box-sizing:border-box" />
+            </div>
+          </div>
+
+          <div style="display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid oklch(88% 0.01 65);margin-bottom:18px;padding-bottom:2px">
+            <sc-for list="{{ editorLangTabs }}" as="tab" hint-placeholder-count="10">
+              <button style="border:none;background:transparent;padding:10px 12px;font:600 13px system-ui;cursor:pointer;border-bottom:2px solid {{ tab.borderColor }};color:{{ tab.color }}" onClick="{{ tab.select }}">{{ tab.native }}</button>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;gap:24px;align-items:flex-start">
+            <div style="flex:1">
+              <div style="font:11px system-ui;color:oklch(50% 0.012 60);margin-bottom:6px">Narration text</div>
+              <textarea value="{{ editorText }}" onChange="{{ onTextChange }}" placeholder="No text yet — add a translation for this language." style="width:100%;box-sizing:border-box;min-height:180px;border:1px solid oklch(82% 0.012 60);border-radius:10px;padding:14px;font:14px/1.6 system-ui;resize:vertical"></textarea>
+            </div>
+            <div style="width:220px;flex:none;display:flex;flex-direction:column;gap:10px">
+              <div style="font:11px system-ui;color:oklch(50% 0.012 60)">Audio status</div>
+              <button style="text-align:left;border:1px solid oklch(82% 0.012 60);border-radius:8px;padding:10px 12px;font:13px system-ui;cursor:pointer;background:{{ statusBg.recorded }}" onClick="{{ setStatusRecorded }}">● Recorded narration</button>
+              <button style="text-align:left;border:1px solid oklch(82% 0.012 60);border-radius:8px;padding:10px 12px;font:13px system-ui;cursor:pointer;background:{{ statusBg.tts }}" onClick="{{ setStatusTts }}">◐ Text-to-speech (upload file)</button>
+              <button style="text-align:left;border:1px solid oklch(82% 0.012 60);border-radius:8px;padding:10px 12px;font:13px system-ui;cursor:pointer;background:{{ statusBg.missing }}" onClick="{{ setStatusMissing }}">○ Missing</button>
+              <button style="margin-top:8px;border:1px dashed oklch(78% 0.012 60);background:transparent;border-radius:8px;padding:10px 12px;font:13px system-ui;cursor:pointer;color:oklch(45% 0.012 60)" onClick="{{ uploadAudio }}">Upload audio file…</button>
+            </div>
+          </div>
+
+          <div style="margin-top:24px">
+            <button style="border:none;background:oklch(64% 0.14 55);color:oklch(15% 0.01 55);padding:11px 20px;border-radius:8px;font:700 13px system-ui;cursor:pointer" onClick="{{ closeEditor }}">Save and close</button>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;logoSrc&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;./assets/museum-logo.webp&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Branding&quot;},&quot;showLogoImage&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Branding&quot;},&quot;simulateOutsideMuseum&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Geofencing preview&quot;}}">
+const LANGS = [
+  {code:'pt', name:'Portuguese', native:'Português'},
+  {code:'en', name:'English', native:'English'},
+  {code:'es', name:'Spanish', native:'Español'},
+  {code:'fr', name:'French', native:'Français'},
+  {code:'de', name:'German', native:'Deutsch'},
+  {code:'it', name:'Italian', native:'Italiano'},
+  {code:'nl', name:'Dutch', native:'Nederlands'},
+  {code:'zh', name:'Chinese', native:'中文'},
+  {code:'ja', name:'Japanese', native:'日本語'},
+  {code:'ru', name:'Russian', native:'Русский'},
+];
+
+const ROOM_NAMES = [
+  'Entrance Hall', 'Paper Storage Racks', 'Production Hall', 'Water Channel', 'Watermarks Collection',
+  'Pulp Preparation', 'Drying Loft', 'Cutting & Finishing', 'Print Workshop', 'Company Archive',
+  'Machine Room', 'Boiler House', 'Founders\u2019 Office', 'Packaging Hall', 'Temporary Exhibitions',
+];
+
+function emptyEntry() { return {status: 'missing', body: ''}; }
+
+const INITIAL_ROOMS = ROOM_NAMES.map((name, i) => {
+  const text = {};
+  LANGS.forEach(l => { text[l.code] = emptyEntry(); });
+  return {id: i + 1, number: i + 1, name, duration: 70 + (i % 5) * 15, text};
+});
+
+// Seed realistic content for the first two rooms, mixed completion states elsewhere.
+INITIAL_ROOMS[0].text.pt = {status:'recorded', body:"Bem-vindo ao museu. Este salão foi outrora a área de recepção da fábrica de papel, e a sua estrutura de madeira data do início do século XX."};
+INITIAL_ROOMS[0].text.en = {status:'recorded', body:"Welcome to the museum. This hall was once the paper mill's reception area, and its timber roof structure dates to the early twentieth century."};
+INITIAL_ROOMS[0].text.es = {status:'tts', body:"Bienvenido al museo. Esta sala fue en su día la zona de recepción de la fábrica de papel, y su estructura de madera data de principios del siglo XX."};
+INITIAL_ROOMS[1].text.pt = {status:'tts', body:"Estas estantes imponentes guardavam outrora resmas de papel prontas para expedição. Note como a estrutura de madeira foi construída para manter o papel seco."};
+INITIAL_ROOMS[1].text.en = {status:'recorded', body:"These towering racks once held reams of paper ready for dispatch. Note how the timber shelving and roof trusses were built to keep the paper dry."};
+INITIAL_ROOMS[3].text.pt = {status:'recorded', body:"O moinho dependia deste canal de água para acionar a sua maquinaria. A produção de papel neste vale dependia inteiramente do caudal do rio."};
+INITIAL_ROOMS[3].text.en = {status:'recorded', body:"The mill relied on this water channel to power its machinery. Papermaking in this valley depended entirely on the river's flow."};
+INITIAL_ROOMS[3].text.fr = {status:'tts', body:"Le moulin dépendait de ce canal d'eau pour actionner ses machines."};
+
+function fmtTime(sec) {
+  sec = Math.max(0, Math.round(sec));
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return m + ':' + String(s).padStart(2, '0');
+}
+
+const STATUS_META = {
+  recorded: {label: 'Recorded', dot: '●'},
+  tts: {label: 'Text-to-speech', dot: '◐'},
+  missing: {label: 'Missing', dot: '○'},
+};
+
+class Component extends DCLogic {
+  state = {
+    view: 'visitor',
+    visitorScreen: 'geocheck',
+    geoResult: (this.props && this.props.simulateOutsideMuseum) ? 'outside' : 'inside',
+    language: null,
+    currentRoomId: null,
+    playing: false,
+    elapsed: 0,
+    transcriptOpen: false,
+    rooms: INITIAL_ROOMS,
+    staffScreen: 'list',
+    staffRoomId: null,
+    staffLang: 'en',
+  };
+
+  componentDidMount() {
+    this._geoTimer = setTimeout(() => {
+      if (this.state.visitorScreen === 'geocheck') {
+        this.setState({visitorScreen: this.state.geoResult === 'inside' ? 'language' : 'geoblocked'});
+      }
+    }, 1200);
+    this._timer = setInterval(() => {
+      if (this.state.playing && this.state.visitorScreen === 'player') {
+        const room = this.state.rooms.find(r => r.id === this.state.currentRoomId);
+        if (room) this.setState(s => {
+          const next = s.elapsed + 1;
+          if (next >= room.duration) return {elapsed: room.duration, playing: false};
+          return {elapsed: next};
+        });
+      }
+    }, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this._timer);
+    clearTimeout(this._geoTimer);
+  }
+
+  getRoomText(room, code) {
+    const entry = room.text[code];
+    if (entry && entry.body) return {body: entry.body, fallback: false};
+    const en = room.text.en;
+    return {body: en && en.body ? en.body : 'No text available yet.', fallback: true};
+  }
+
+  renderVals() {
+    const st = this.state;
+    const isVisitor = st.view === 'visitor';
+    const isStaff = st.view === 'staff';
+
+    const languages = LANGS.map(l => ({
+      ...l,
+      select: () => this.setState({language: l.code, visitorScreen: 'roomlist'}),
+      selectAndReturn: () => this.setState({language: l.code, visitorScreen: 'player'}),
+    }));
+
+    const currentRoom = st.rooms.find(r => r.id === st.currentRoomId) || null;
+    const currentLang = LANGS.find(l => l.code === st.language) || LANGS[0];
+
+    let currentRoomText = '', currentRoomTextPreview = '';
+    if (currentRoom) {
+      const {body, fallback} = this.getRoomText(currentRoom, st.language);
+      currentRoomText = fallback ? body + ' (English — translation not yet available)' : body;
+      currentRoomTextPreview = currentRoomText.length > 90 ? currentRoomText.slice(0, 90) + '…' : currentRoomText;
+    }
+
+    const progressPct = currentRoom ? Math.min(100, (st.elapsed / currentRoom.duration) * 100) : 0;
+
+    const roomListItems = st.rooms.map(r => ({
+      number: r.number, name: r.name,
+      open: () => this.setState({currentRoomId: r.id, visitorScreen: 'player', elapsed: 0, playing: false, transcriptOpen: false}),
+    }));
+
+    const deviceTitleMap = {geocheck:'Museu do Papel', geoblocked:'Museu do Papel', language:'Museu do Papel', roomlist:'Museu do Papel', switchlang:'Language', player: currentRoom ? currentRoom.name : 'Museu do Papel'};
+
+    const badgeStyle = (status) => {
+      if (status === 'recorded') return 'background:oklch(64% 0.14 55);color:oklch(15% 0.01 55)';
+      if (status === 'tts') return 'background:oklch(92% 0.05 55);color:oklch(45% 0.12 55);border:1px solid oklch(75% 0.09 55)';
+      return 'background:transparent;color:oklch(60% 0.01 60);border:1px dashed oklch(80% 0.01 60)';
+    };
+
+    const staffRoomRows = st.rooms.map(r => ({
+      number: r.number, name: r.name,
+      edit: () => this.setState({staffScreen: 'editor', staffRoomId: r.id, staffLang: 'en'}),
+      badges: LANGS.map(l => ({
+        code: l.code.toUpperCase(),
+        title: l.name + ': ' + STATUS_META[r.text[l.code].status].label,
+        style: badgeStyle(r.text[l.code].status),
+      })),
+    }));
+
+    const editRoom = st.rooms.find(r => r.id === st.staffRoomId) || null;
+    const updateRoom = (patch) => {
+      this.setState(s => ({rooms: s.rooms.map(r => r.id === s.staffRoomId ? {...r, ...patch(r)} : r)}));
+    };
+    const updateLangEntry = (patch) => {
+      updateRoom(r => ({text: {...r.text, [this.state.staffLang]: {...r.text[this.state.staffLang], ...patch}}}));
+    };
+
+    const editorLangTabs = LANGS.map(l => ({
+      code: l.code, native: l.native,
+      select: () => this.setState({staffLang: l.code}),
+      color: st.staffLang === l.code ? 'oklch(30% 0.012 55)' : 'oklch(55% 0.012 60)',
+      borderColor: st.staffLang === l.code ? 'oklch(64% 0.14 55)' : 'transparent',
+    }));
+
+    const currentEntry = editRoom ? editRoom.text[st.staffLang] : {status: 'missing', body: ''};
+    const statusBg = {
+      recorded: currentEntry.status === 'recorded' ? 'oklch(93% 0.05 55)' : 'transparent',
+      tts: currentEntry.status === 'tts' ? 'oklch(93% 0.05 55)' : 'transparent',
+      missing: currentEntry.status === 'missing' ? 'oklch(93% 0.05 55)' : 'transparent',
+    };
+
+    return {
+      isVisitor, isStaff,
+      goVisitor: () => this.setState({view: 'visitor'}),
+      goStaff: () => this.setState({view: 'staff'}),
+      visitorTabBg: isVisitor ? 'oklch(30% 0.014 55)' : 'transparent',
+      visitorTabColor: isVisitor ? 'oklch(95% 0.008 70)' : 'oklch(65% 0.012 60)',
+      staffTabBg: isStaff ? 'oklch(30% 0.014 55)' : 'transparent',
+      staffTabColor: isStaff ? 'oklch(95% 0.008 70)' : 'oklch(65% 0.012 60)',
+
+      logoSrc: (this.props && this.props.logoSrc) ?? './assets/museum-logo.webp',
+      showLogoImage: (this.props && this.props.showLogoImage) ?? true,
+      showLogoText: !((this.props && this.props.showLogoImage) ?? true),
+
+      deviceTitle: deviceTitleMap[st.visitorScreen] || 'Museu do Papel',
+      showGeoCheck: st.visitorScreen === 'geocheck',
+      showGeoBlocked: st.visitorScreen === 'geoblocked',
+      retryGeo: () => this.setState({visitorScreen: 'geocheck'}),
+      showLanguage: st.visitorScreen === 'language',
+      showRoomList: st.visitorScreen === 'roomlist',
+      showSwitchLang: st.visitorScreen === 'switchlang',
+      showPlayer: st.visitorScreen === 'player',
+      languages,
+      backToHome: () => this.setState({visitorScreen: 'roomlist'}),
+      openSwitchLang: () => this.setState({visitorScreen: 'switchlang'}),
+      closeSwitchLang: () => this.setState({visitorScreen: 'player'}),
+      roomListItems,
+      currentLangNative: currentLang.native,
+      currentRoomNumber: currentRoom ? currentRoom.number : '',
+      currentRoomName: currentRoom ? currentRoom.name : '',
+      currentRoomText, currentRoomTextPreview,
+      transcriptOpen: st.transcriptOpen,
+      transcriptClosed: !st.transcriptOpen,
+      transcriptLabel: st.transcriptOpen ? 'Hide full transcript' : 'Show full transcript',
+      toggleTranscript: () => this.setState(s => ({transcriptOpen: !s.transcriptOpen})),
+      progressPct,
+      elapsedLabel: fmtTime(st.elapsed),
+      durationLabel: currentRoom ? fmtTime(currentRoom.duration) : '0:00',
+      playing: st.playing,
+      playIcon: st.playing ? '❚❚' : '▶',
+      togglePlay: () => this.setState(s => ({playing: !s.playing})),
+      skipPrev: () => this.setState({elapsed: 0}),
+      skipNext: () => { if (currentRoom) this.setState({elapsed: currentRoom.duration, playing: false}); },
+
+      showStaffList: st.staffScreen === 'list',
+      showStaffEditor: st.staffScreen === 'editor',
+      staffRoomRows,
+      addRoom: () => this.setState(s => {
+        const nextNum = s.rooms.length + 1;
+        const emptyText = {};
+        LANGS.forEach(l => emptyText[l.code] = {status: 'missing', body: ''});
+        return {rooms: [...s.rooms, {id: Date.now(), number: nextNum, name: 'New Room', duration: 60, text: emptyText}]};
+      }),
+      closeEditor: () => this.setState({staffScreen: 'list'}),
+      editRoomNumber: editRoom ? editRoom.number : '',
+      editRoomName: editRoom ? editRoom.name : '',
+      onNumberChange: (e) => updateRoom(() => ({number: e.target.value})),
+      onNameChange: (e) => updateRoom(() => ({name: e.target.value})),
+      editorLangTabs,
+      editorText: currentEntry.body,
+      onTextChange: (e) => updateLangEntry({body: e.target.value, status: currentEntry.status === 'missing' && e.target.value ? 'tts' : currentEntry.status}),
+      statusBg,
+      setStatusRecorded: () => updateLangEntry({status: 'recorded'}),
+      setStatusTts: () => updateLangEntry({status: 'tts'}),
+      setStatusMissing: () => updateLangEntry({status: 'missing'}),
+      uploadAudio: () => updateLangEntry({status: 'recorded'}),
+    };
+  }
+}
+</script>
+</body>
+</html>
